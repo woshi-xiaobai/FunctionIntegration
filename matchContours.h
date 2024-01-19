@@ -53,3 +53,57 @@ cv::Point2f computeNormalVector(const cv::Point2f &point1,
 
   return normalVector;
 }
+
+
+
+// 计算两点之间的Freeman编码
+int computeFreemanCode(const cv::Point &p1, const cv::Point &p2) {
+  /*         8链码
+  *             2
+  *         3       1
+  *     4               0
+  *         5       7
+  *             8
+  * 
+  * 
+  */
+
+  int dx = p2.x - p1.x;
+  int dy = p2.y - p1.y;
+
+  if (dx == 0 && dy == -1)
+    return 0;
+  if (dx == 1 && dy == -1)
+    return 1;
+  if (dx == 1 && dy == 0)
+    return 2;
+  if (dx == 1 && dy == 1)
+    return 3;
+  if (dx == 0 && dy == 1)
+    return 4;
+  if (dx == -1 && dy == 1)
+    return 5;
+  if (dx == -1 && dy == 0)
+    return 6;
+  if (dx == -1 && dy == -1)
+    return 7;
+
+  return -1; // Invalid case
+}
+
+// 计算轮廓的Freeman编码
+std::vector<int> computeFreemanCodes(const std::vector<cv::Point> &contour) {
+  std::vector<int> freemanCodes;
+  if (contour.size()<2) {
+    return freemanCodes;
+  }
+
+  for (size_t i = 0; i < contour.size() - 1; ++i) {
+    int code = computeFreemanCode(contour[i], contour[i + 1]);
+    freemanCodes.push_back(code);
+  }
+
+  return freemanCodes;
+}
+
+
